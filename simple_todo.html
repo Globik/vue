@@ -1,0 +1,67 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="shortcut icon" type="image/ico" href="w4.png">
+<style>
+	html, body{margin:0;padding:0;}
+	*box-sizing{border-box;}
+section{background:yellow;width:50%;margin:0 auto;padding:5px;}
+main{padding:5px;}
+.todolist{background:red;}
+.todocontent{border:1px solid green;display:inline-block;}
+.todocontent.left{width:80%;}
+.todocontent.right{width: calc(20% - 4px);text-align:right;}
+input{padding:10px;}
+button{background:brown;padding:10px;}
+</style>
+<title>simple todo app</title>
+<script src="vue.js"></script>
+</head>
+<body>
+	<main>
+<h3>simple todo app</h3>
+<section id="app">
+<div>
+<h3>todos</h3>
+<div>
+<input  type="text" placeholder="new todo" v-model="newTodo" @keypress.enter="addTodo(newTodo)" required>
+<button @click="addTodo(newTodo)">Add</button>
+<button @click="cancelTodo">Cancel</button>
+</div>
+<template v-if="todos.length==0">
+<h3>No Todos</h3>
+</template>
+<template v-else>
+<div class="todolist" v-for="(todo, index) in todos" :key="index">
+<div class="todocontent left"><span>{{index}}&nbsp;</span><span>{{todo}}</span></div><div class="todocontent right"><button @click="removeTodo(index)">remove</button></div>
+</div>
+<button @click="clearAll">Clear All</button>
+</template>
+</div>
+</section>
+</main>
+<script>
+const app=new Vue({
+	el:"#app",
+	data:{newTodo:'',todos:[]},
+	methods:{
+		addTodo(todo){
+			if(!this.newTodo){console.log("no todo??");return;}
+			console.log("todo: ", todo);
+			this.todos.push(todo);
+			this.newTodo='';
+		},
+		cancelTodo(){
+			this.newTodo='';
+		},
+		removeTodo(index){
+			console.log('index: ', index);
+			this.todos.splice(index,1);
+		},
+		clearAll(){this.todos=[];}
+	}})
+</script>
+</body>
+</html>
