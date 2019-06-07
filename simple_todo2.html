@@ -1,0 +1,208 @@
+<html>
+<head><title>todo 2</title>
+<!-- <link rel="stylesheet" href="https://unpkg.com/todomvc-app-css@2.0.4/index.css"> -->
+<!-- <script src="https://unpkg.com/director@1.2.8/build/director.js"></script> -->
+<script src="vue.js"></script>
+<style>[v-cloak] { display: none; }</style>
+</head>
+<body>
+	<!--
+<section class="todoapp">
+<header class="header">
+<h1>todos</h1>
+<input class="new-todo" autofocus autocomplete="off" placeholder="what needs to be done?" v-model="newTodo" @keyup.enter="addTodo">
+</header>
+<section class="main" v-show="todos.length" v-cloak>
+<input class="toggle-all" type="checkbox" v-model="allDone">
+<ul class="todo-list">
+<li v-for="todo in filteredTodos" class="todo" :key="todo.id" :class="{completed:todo.completed,editing:todo==editedTodo}">
+<div class="view">
+<input class="toggle" type="checkbox" v-model="todo.completed">
+<label @dbclick="editTodo(todo)">{{todo.title}}</label>
+<button class="destroy" @click="removeTodo(todo)"></button>
+</div>
+<input class="edit" type="text" v-model="todo-title" v-todo-focus="todo==editedTodo" @blur="doneEdite(todo)" @keyup.enter="doneEdit(todo)"
+@keyup.esc="cancelEdit(todo)">
+</li>
+</ul>
+</section>
+<footer class="footer" v-show="todos.length" v-cloak>
+<span class="todo-count"><strong>{{remaining}}</strong>{{remaining | pluralize}} left</span>
+<ul class="filters">
+<li><a href="#/all" :class="{selected:visibility=='all'}">all</a></li>
+<li><a href="#/active" :class="{selected:visibility=='active'}">active</a></li>
+<li><a href="#/completed" :class="{selected:visibility=='completed'}">completed</a></li>
+</ul>
+<button class="clear-completed" @click="removeCompleted" v-show="todos.length > remaining">clear completed</button>
+</footer>
+</section>
+-->
+ <section class="todoapp">
+      <header class="header">
+        <h1>todos</h1>
+        <input class="new-todo"
+          autofocus autocomplete="off"
+          placeholder="What needs to be done?"
+          v-model="newTodo"
+          @keyup.enter="addTodo">
+      </header>
+      <section class="main" v-show="todos.length" v-cloak>
+        <input class="toggle-all" type="checkbox" v-model="allDone">
+        <ul class="todo-list">
+          <li v-for="todo in filteredTodos"
+            class="todo"
+            :key="todo.id"
+            :class="{ completed: todo.completed, editing: todo == editedTodo }">
+            <div class="view">
+              <input class="toggle" type="checkbox" v-model="todo.completed">
+              <label @dblclick="editTodo(todo)">{{ todo.title }}</label>
+              <button class="destroy" @click="removeTodo(todo)"></button>
+            </div>
+            <input class="edit" type="text"
+              v-model="todo.title"
+              v-todo-focus="todo == editedTodo"
+              @blur="doneEdit(todo)"
+              @keyup.enter="doneEdit(todo)"
+              @keyup.esc="cancelEdit(todo)">
+          </li>
+        </ul>
+      </section>
+      <footer class="footer" v-show="todos.length" v-cloak>
+        <span class="todo-count">
+          <strong>{{ remaining }}</strong> {{ remaining | pluralize }} left
+        </span>
+        <ul class="filters">
+          <li><a href="#/all" :class="{ selected: visibility == 'all' }">All</a></li>
+          <li><a href="#/active" :class="{ selected: visibility == 'active' }">Active</a></li>
+          <li><a href="#/completed" :class="{ selected: visibility == 'completed' }">Completed</a></li>
+        </ul>
+        <button class="clear-completed" @click="removeCompleted" v-show="todos.length > remaining">
+          Clear completed
+        </button>
+      </footer>
+    </section>
+    <footer class="info">
+      <p>Double-click to edit a todo</p>
+      <p>Written by <a href="http://evanyou.me">Evan You</a></p>
+      <p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
+    </footer>
+<!-- -->
+<script>
+var storage_key="foo";
+var todoStorage={
+fetch:function(){
+var todos=JSON.parse(localStorage.getItem(storage_key) || '[]')
+todos.forEach(function(todo,index){todo.id=index})
+todoStorage.uid=todos.length
+return todos	
+},
+save:function(todos){
+localStorage.setItem(storage_key, JSON.stringify(todos))	
+}	
+}
+var filters={
+all:function(todos){
+return todos;	
+},
+active: function(todos){
+	return todos.filter(function(todo){return !todo.completed})
+	},
+	completed: function(todos){
+		return todos.filter(function(todo){return todo.completed})	
+}	
+}
+var app=new Vue({
+	data:{
+		todos:todoStorage.fetch(),
+		newTodo:'',
+		editedTodo:null,
+		visibility:'all'
+},
+watch:{
+	todos:{
+		handler: function(todos){
+			console.log('watch.handler')
+			todoStorage.save(todos)
+			},
+			deep:true
+			}
+			},
+			computed:{
+				filteredTodos: function(){
+					return filters[this.visibility](this.todos)
+					},
+					remaining: function(){
+						return filters.active(this.todos).length
+						},
+						allDone:{
+							get: function(){
+								console.log('this.remaining: ;',this.remaining)
+								return this.remaining===0
+							},
+							set: function(value){
+								this.todos.forEach(function(todo){
+									todo.completed=value
+									console.log('value: ',value)
+								})
+							}
+						}
+					},
+					filters:{
+						pluralize:function(n){
+							return n===1?'item':'items'
+						}
+					},
+					methods:{
+						addTodo:function(){
+							var value=this.newTodo && this.newTodo.trim()
+							if(!value)return
+							this.todos.push({
+								id:todoStorage.uid++,
+								title:value,
+								completed:false
+							})
+							this.newTodo=''
+						},
+						removeTodo:function(todo){
+							this.todos.splice(this.todos.indexOf(todo),1)
+						},
+						editTodo:function(todo){
+							this.beforeEditCache=todo.title
+							this.editedTodo=todo
+						},
+						doneEdit: function(todo){
+							if(!this.editedTodo)return
+							this.editedTodo=null
+							todo.title=todo.title.trim()
+							if(!todo.title)this.removeTodo(todo)
+						},
+						cancelEdit:function(todo){
+							this.editedTodo=null
+							todo.title=this.beforeEditCache;
+						},
+						removeCompleted:function(){
+							this.todos=filters.active(this.todos)
+						}
+					},
+					directives:{
+						'todo-focus': function(el,binding){
+							if(binding.value)el.focus()
+						}}})
+						
+						function onhashchange(){
+							var visibility=window.location.hash.replace(/#\/?/,'')
+							if(filters[visibility]){
+								app.visibility=visibility
+							}else{
+								window.location.hash=''
+								app.visibility='all'
+							}}
+							window.addEventListener('hashchange',onhashchange)
+							
+							//onhashchange()
+							app.$mount('.todoapp')
+							
+							
+								</script> 
+</body>
+</html>
