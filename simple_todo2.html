@@ -6,26 +6,36 @@
 <style>[v-cloak] { display: none; }</style>
 </head>
 <body>
-	<!--
+	
 <section class="todoapp">
 <header class="header">
 <h1>todos</h1>
 <input class="new-todo" autofocus autocomplete="off" placeholder="what needs to be done?" v-model="newTodo" @keyup.enter="addTodo">
 </header>
+
 <section class="main" v-show="todos.length" v-cloak>
-<input class="toggle-all" type="checkbox" v-model="allDone">
+	
+<input class="toggle-all" type="checkbox" v-model="allDone"> 
 <ul class="todo-list">
 <li v-for="todo in filteredTodos" class="todo" :key="todo.id" :class="{completed:todo.completed,editing:todo==editedTodo}">
+
 <div class="view">
+	
 <input class="toggle" type="checkbox" v-model="todo.completed">
-<label @dbclick="editTodo(todo)">{{todo.title}}</label>
-<button class="destroy" @click="removeTodo(todo)"></button>
+<label @dblclick="editTodo(todo)">{{todo.title}}</label> 
+ <button class="destroy" @click="removeTodo(todo)">del</button> 
 </div>
-<input class="edit" type="text" v-model="todo-title" v-todo-focus="todo==editedTodo" @blur="doneEdite(todo)" @keyup.enter="doneEdit(todo)"
-@keyup.esc="cancelEdit(todo)">
+
+<input class="edit" type="text" v-model="todo.title" v-todo-focus="todo == editedTodo" @blur="doneEdit(todo)" 
+@keyup.enter = "doneEdit(todo)" @keyup.esc="cancelEdit(todo)"> 
+
+
+
+
 </li>
-</ul>
+</ul> 
 </section>
+
 <footer class="footer" v-show="todos.length" v-cloak>
 <span class="todo-count"><strong>{{remaining}}</strong>{{remaining | pluralize}} left</span>
 <ul class="filters">
@@ -35,9 +45,11 @@
 </ul>
 <button class="clear-completed" @click="removeCompleted" v-show="todos.length > remaining">clear completed</button>
 </footer>
+
 </section>
--->
- <section class="todoapp">
+
+
+ <!-- <section class="todoapp">
       <header class="header">
         <h1>todos</h1>
         <input class="new-todo"
@@ -85,8 +97,7 @@
       <p>Double-click to edit a todo</p>
       <p>Written by <a href="http://evanyou.me">Evan You</a></p>
       <p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
-    </footer>
-<!-- -->
+    </footer> -->
 <script>
 var storage_key="foo";
 var todoStorage={
@@ -193,13 +204,14 @@ watch:{
 							var visibility=window.location.hash.replace(/#\/?/,'')
 							if(filters[visibility]){
 								app.visibility=visibility
+								console.log(visibility)
 							}else{
 								window.location.hash=''
 								app.visibility='all'
 							}}
 							window.addEventListener('hashchange',onhashchange)
 							
-							//onhashchange()
+							onhashchange()
 							app.$mount('.todoapp')
 							
 							
