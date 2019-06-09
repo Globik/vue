@@ -1,0 +1,41 @@
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="shortcut icon" type="image/ico" href="w4.png">	
+<title>online toggle</title>
+<!-- <link rel="stylesheet" href="https://unpkg.com/todomvc-app-css@2.0.4/index.css"> -->
+<script src="vue.js"></script>
+<style>.onlineMaker{width:10px;height:10px;background:red;}</style>
+</head>
+<body>
+<h3>online toggle</h3>
+<div id="demo">
+<div class="inline-block card">
+<div :class="{onlineMaker: true,online:status,offline: !status}"></div>
+<p>user is {{ (status)?'online':'offline'}}</p>
+<div><input type="checkbox" v-model="status">toggle status</div>
+</div>
+</div>
+<script>
+var demo=new Vue({
+	el:"#demo",
+	data:{
+		sp:null
+	},
+	computed:{
+		status:{
+			get(){
+				console.log('get')
+				return (this.sp===null)?true:this.sp
+			},
+			set(val){
+				console.log('set: ',val)
+				this.sp=val
+			}
+		}
+	}
+})
+</script>
+</body></html>
